@@ -7,12 +7,8 @@
 
 classify <- function(S,z){
 
-# obtain dimension
-d <- length(z)-1
-offset <- -z[length(z)] * z[1:d] / sum(z[1:d]^2)
+SS <- do.call(rbind, S[1])
 
-# compute the class assignments
-y <- as.vector(sign(S %*% w))
-
-
+y = as.vector(sign((SS %*% z)))
+return(y=y)
 }
