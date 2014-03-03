@@ -12,24 +12,29 @@ runsvm <- function(data,class,data_test,class_test){
     c_test <- read.table(class_test, header = FALSE, skip = 0)
 
     d <- as.matrix(d)
-    #d_test  <- as.matrix(d_test)
+    d_test  <- as.matrix(d_test)
     c <- as.matrix(c)
-    #c_test <- as.matrix(c_test)
+    c_test <- as.matrix(c_test)
 
     x <- d
     y <- c
-    model <- svm(data=x,x,y, cost=1)
+    model <- svm(data=x,x,y, cost=70, gamma = .003)
     print(model)
     summary(model)
 
     pred <- predict(model, x)
-    #table(pred, y)
+    print(table(pred, y))
+    plot(cmdscale(dist(d)),
+      col = as.integer(pred<0)+1,
+        pch = c("o","+")[1:150 %in% model$index + 1])
 
-    pred <- predict(model, x, decision.values = TRUE)
+
+    pred <- predict(model, d_test, decision.values = TRUE)
+    print(table(pred,c_test))
     attr(pred, "decision.values")
-    z <-table(pred, y)
-    p <- cbind(d,z[,2])
-    print(p)
+    plot(cmdscale(dist(d_test)),
+      col = as.integer(pred<0)+1,
+        pch = c("o","+")[1:150 %in% model$index + 1])
 
 #    plot(cmdscale(dist(p[,-ncol(p)])),
  #       col = as.integer(p[,ncol(p)])+4,
