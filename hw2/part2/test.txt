@@ -1,6 +1,28 @@
 10 tests, fix cost, gamma, 10 fold cross validate
 
+fix gamma, vary margin
+
+cont 	gamma
+0.01	.4
+0.05    .405	
+0.1 	.415
+0.5     .43	
+1 		.55
+5 		.715
+10  	.605
+50 		.495
+100 	.575
+500     .595   
+1000    .455
+5000    .495
+10000   .605
 
 
+
+
+
+
+
+2- The linear case is fairly accurate regardless of the margin parameter, as the data seems linearly separable on certain data points (i.e. the left bottom point of the 6 vs the open 5, the curved arc of the 6 versus the corner 5). In contrast, the rbf kernel with arbitrary gamma performs much worse. If we instead pick a specific, well-performing gamma, the rbf kernel is capable of performing better than the linear case.  
 
  
