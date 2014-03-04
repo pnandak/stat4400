@@ -9,6 +9,8 @@ classify <- function(S,z){
 
 SS <- do.call(rbind, S[1])
 
-y = as.vector(sign((SS %*% z)))
+z <- t(as.matrix(z))
+
+y = as.vector(sign((  SS[,-3]  %*%  z[,-3]  ) + z[,3] ))
 return(y=y)
 }

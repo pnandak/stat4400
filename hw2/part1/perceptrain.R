@@ -6,68 +6,81 @@
 #z: hyperplane defining classifier
 #Z_history: history of transformation of Z over iterations
 
-perceptrain <- function(S,y){
- 
-    #S <- do.call(rbind, S[1])
+perceptrain <- function(S){
+    y <- do.call(rbind, S[2])
+    S <- do.call(rbind, S[1])
 
-    d <- nrow(S)
+    num <- nrow(S)
+    dim <- ncol(S)
+
     #current hyperplane
-    Z <- rep(0, d)
+    Z <- as.matrix(rep(1, dim), ncol=1)
  
     #history list
     Z_history <- list()
+    Z_history <- cbind(Z_history,Z)
+
 
     #iteration
     k <- 1 
- 
-
-    cost <- function(x,y,z, dim){
-        cc <- 0
-        for(i in 1:dim){
-            #get ith col of x
-            #x(,i)
-            xx <- rbind(1,x(,i))
-            #f(x) = sign((1,x), z)
-            fx <- sign(xx %*% z)
-            dot <- z%*%xx
-
-            cc <- cc + 1*(fx == y[i])*dot
-        }
-        return (cc=cc)
-    }
-
-    grad <- function(x,y,z,dim){
-        g <- rep(0, d)
-       #sum indic*(-y)(1,x) 
-        for(i in 1:dim){
-            #get ith col of x
-            #x(,i)
-            xx <- rbind(1,x(,i))
-            #f(x) = sign((1,x), z)
-            fx <- sign(xx %*% z)
 
 
-            g <- g + 1*(fx == y[i])*(-y[i])*(xx)
-        }
-        return (g=g)
-    }
-
-
-
-    while(!identical(cost(x,y,z,d),0)){
+    while(abs(cost(S,y,Z,dim,num)) != 0){
+        #print(cost(S,y,Z,dim,num))
         a <- 1/k
-        c <- grad(x,y,z,d)
+        c <- grad(S,y,Z,dim,num)
 
         #get new z
-        Z <- Z - a*c
+        Z <- Z - t(a*c)
 
         #add Z to Z_history
         Z_history <- cbind(Z_history,Z)
 
         k<-k+1
     }
-
-    return(Z=Z, Z_history=Z_history)
+    return(list(Z=Z, Z_history=Z_history))
 }
 
+cost <- function(x, y, z, dim, num){
+    cc <- 0
 
+    for(i in 1:num){
+        #get ith row of x
+        #x(,i)
+        xx <- t(x[i,])
+
+        #xx <- t(rbind(1,xx))
+        #f(x) = sign((1,x), z)
+        #fx <- sign(t(z) %*% xx)
+
+        #print( (xx[,-3] %*% z[-3,]) - z[3,]) 
+
+
+        fx <- sign( (xx[,-3] %*% z[-3,]) + z[3,] )
+
+        dot <- (xx[,-3] %*% z[-3,]) + z[3,]
+
+        id <- 1*(fx != y[i])
+        cc <- cc + id*dot
+    }
+    return (cc=cc)
+}
+
+grad <- function(x, y, z, dim, num){
+    g <- t(as.matrix(rep(0, dim)))
+   #sum indic*(-y)(1,x) 
+    for(i in 1:num){
+
+        xx <- t(as.matrix(x[i,]))
+
+        fx <- as.integer(sign( (xx[,-3] %*% z[-3,]) + z[3,] ))
+
+        id <- as.integer(1*(fx != y[i]))
+
+        negy <- -1*y[i]
+
+        g <- g + id*negy*xx
+    }
+
+    return (g=g)
+}
