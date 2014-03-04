@@ -40,7 +40,7 @@ runsvm <- function(data,class){
     #linear
     #svm.model <- svm(class ~ ., data=trainset, cost=500, kernel = "linear", type="C-classification", cross=10)
     #rbf
-    svm.model <- svm(class ~ ., data=trainset, cost=50, gamma = .00005, type="C-classification", cross=10)
+    svm.model <- svm(class ~ ., data=trainset, cost=10000, gamma = .1, type="C-classification", cross=10)
 
     #model <- svm(data=x, x, y, cost=70, gamma = 0.003, cross=5)
     #print(summary(svm.model))
@@ -48,10 +48,6 @@ runsvm <- function(data,class){
     svm.pred <- predict(svm.model, testset[,-ncol(d)], decision.values = TRUE)
 
     #print(summary(pred))
-    #print(attr(svm.pred, "decision.values"))
-    #plot(cmdscale(dist(testset)),
-      #col = as.integer(svm.pred),
-        #pch = c("o","+")[1:150 %in% svm.model$index + 1])
 
     tab <- table(pred = svm.pred, true = testset[,ncol(d)])
 
