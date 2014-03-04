@@ -3,4 +3,6 @@
 
 
 
+2- The linear case is fairly accurate regardless of the margin parameter, as the data seems linearly separable on certain data points (i.e. the left bottom point of the 6 vs the open 5, the curved arc of the 6 versus the corner 5). In contrast, the rbf kernel with arbitrary gamma performs much worse. If we instead pick a specific, well-performing gamma, the rbf kernel is capable of performing better than the linear case.  
+
  
