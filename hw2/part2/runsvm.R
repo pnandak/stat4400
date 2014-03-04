@@ -35,23 +35,26 @@ runsvm <- function(data,class){
     y <- as.matrix(trainset[,ncol(d)])
 
     #gamma is margin parameter
-    # is kernel bandwidth
+    #cost is kernel bandwidth
 
-    svm.model <- svm(class ~ ., data=trainset, cost=1, gamma = 10, type="C-classification")
-    #svm.model <- svm(x=x,y=y, cost=70, gamma = .01)
+    #linear
+    #svm.model <- svm(class ~ ., data=trainset, cost=500, kernel = "linear", type="C-classification", cross=10)
+    #rbf
+    svm.model <- svm(class ~ ., data=trainset, cost=50, gamma = .00005, type="C-classification", cross=10)
+
     #model <- svm(data=x, x, y, cost=70, gamma = 0.003, cross=5)
-    print(summary(svm.model))
+    #print(summary(svm.model))
 
     svm.pred <- predict(svm.model, testset[,-ncol(d)], decision.values = TRUE)
 
     #print(summary(pred))
     #print(attr(svm.pred, "decision.values"))
     #plot(cmdscale(dist(testset)),
-     # col = as.integer(pred<0)+1,
-      #  pch = c("o","+")[1:150 %in% model$index + 1])
+      #col = as.integer(svm.pred),
+        #pch = c("o","+")[1:150 %in% svm.model$index + 1])
 
     tab <- table(pred = svm.pred, true = testset[,ncol(d)])
 
-    print(tab)
+    #print(tab)
     print(classAgreement(tab))
 }
