@@ -21,27 +21,31 @@ runsvm <- function(data,class){
     d <- as.matrix(d)
     class <- as.matrix(c)
     colnames(class) <- "class"
-    d <- data.frame(cbind(d,class))
+    d <- cbind(d,class)
+    d <- data.frame(d)
 
-
-    f <- as.formula(paste(tail(names(d), 1), "~ ."))
+    #f <- as.formula(paste(tail(names(d), 1), "~ ."))
 
     index <- 1:nrow(d)
     testindex <- sample(index, trunc(length(index)/5))
     testset <- d[testindex,]
     trainset <- d[-testindex,]
 
-    x <- as.matrix(testset[,-ncol(d)])
-    y <- as.matrix(testset[,ncol(d)])
+    x <- as.matrix(trainset[,-ncol(d)])
+    y <- as.matrix(trainset[,ncol(d)])
 
-    svm.model <- svm(data=trainset, x=x, y=y, cost=70, gamma = 1, cross =5)
+    #gamma is margin parameter
+    # is kernel bandwidth
+
+    svm.model <- svm(class ~ ., data=trainset, cost=1, gamma = 10, type="C-classification")
+    #svm.model <- svm(x=x,y=y, cost=70, gamma = .01)
     #model <- svm(data=x, x, y, cost=70, gamma = 0.003, cross=5)
     print(summary(svm.model))
 
-    svm.pred <- predict(svm.model, testset[,-ncol(d)])
+    svm.pred <- predict(svm.model, testset[,-ncol(d)], decision.values = TRUE)
 
     #print(summary(pred))
-    #print(attr(pred, "decision.values"))
+    #print(attr(svm.pred, "decision.values"))
     #plot(cmdscale(dist(testset)),
      # col = as.integer(pred<0)+1,
       #  pch = c("o","+")[1:150 %in% model$index + 1])
