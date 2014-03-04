@@ -31,9 +31,10 @@ runsvm <- function(data,class){
     testset <- d[testindex,]
     trainset <- d[-testindex,]
 
+    x <- as.matrix(testset[,-ncol(d)])
+    y <- as.matrix(testset[,ncol(d)])
 
-
-    svm.model <- svm(f, data=trainset, cost=70, gamma = 1, cross =5)
+    svm.model <- svm(data=trainset, x=x, y=y, cost=70, gamma = 1, cross =5)
     #model <- svm(data=x, x, y, cost=70, gamma = 0.003, cross=5)
     print(summary(svm.model))
 
