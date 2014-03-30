@@ -1,0 +1,43 @@
+% HMC Math dep
+% v0.04 by Eric J. Malm, 10 Mar 2005
+\documentclass[12pt,letterpaper,boxed]{hmcpset}
+
+% set 1-inch margins in the document
+\usepackage[margin=1in]{geometry}
+
+% include this if you want to import graphics files with /includegraphics
+\usepackage{graphicx}
+\usepackage{amsmath} 
+\usepackage{amssymb}
+\name{Tim Paine}
+\class{tkp2108}
+\duedate{3 April 2014}
+
+
+\begin{document}
+
+\problemlist{Statistical Machine Learning}
+
+\begin{problem}[Problem 1]
+\end{problem}
+
+\begin{solution}
+1. The one on the left encourages sparse estimates, as it looks for points in $\hat{\beta}$ that have either $\beta_1$ or $\beta_2$ but not both, whereas the one on the right does not encourage sparse elements (as clearly evidenced by the fact that $x_4$ and $x_5$ now intersect with the cost function). \\
+2. For the cost on the left, $x_3$ minimizes the cost, as it is the only point to intersect the constraint region. For cost on the right, two points $x_3$ and $x_5$ intersect the border of the constraint region, and one point $x_4$ lies within the constraint region. We are looking for a solution which minimizes the value on which we are constraining, so since $x_4$ lies within the region, its associated cost is less than the two points that lie on the border. \\
+\end{solution}
+
+
+\begin{problem}[Problem 2]
+
+\end{problem}
+
+\begin{solution}
+1. Show that for any positive $a \in \mathbb{R}$, $k(x,x') = ak_1(x,x')$ is a kernel. \\
+2. Show that $k(x,x') = k_1(x,x')k_2(x,x')$ is a kernel. \\
+3. Show that for any positive $p \in \mathbb{Z}$, $k(x,x') = k_1(x,x')^p$ is a kernel. \\
+
+\end{solution}
+
+
+
+\end{document}
