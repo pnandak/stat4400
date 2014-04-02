@@ -14,23 +14,14 @@ data <- t(as.matrix(d))
 class <- matrix(unlist(c), nrow=1)
 
 
-
-#Data is BxM matrix, where there are M
-#Vectors each with B dimensions
-
-#Class is 1xM matrix where there are
-#M values for the class of each of the M vectors
-
-
 #initialize loop conditions
 b <- 1
-B <- nrow(data)
 
-#number of vectors
-count <- ncol(data)
+#number of weak learners to train
+B <- 4
 
 #initilize weights, 1 per dim
-weights <- t(as.matrix(rep(1/B,B),nrow=1))
+weights <- t(as.matrix(rep(1/nrow(data),nrow(data)),nrow=1))
 
 #initilize allPars which keeps B copies of (j, theta, m)
 allPars <- list()
@@ -38,21 +29,44 @@ allPars <- list()
 #these are the alphas
 voting_weights <- list()
 
+
+#Sample 4/5 of data as training set
+index <- 1:ncol(data)
+testindex <- sample(index, trunc(length(index)/5))
+testset <- data[,testindex]
+trainset <- data[,-testindex]
+
+testclass <- matrix(unlist(class[,testindex]), nrow=1)
+trainclass <- matrix(unlist(class[,-testindex]), nrow=1)
+
+#number of vectors
+count <- ncol(trainset)
+
 while(b != B){
+    #size = ncol(trainset)
+
+
+    #split training data into 5 pieces
+    #fit 5 different classifiers
+    #Calculate validation error for each.
+    #pick one with smallest validation error
+    #print the error
+    #print the test error (call agg_class)
+
     #fit classifier
-    pars<-train(data, weights, class)
-    allPars <- cbind(allPars, pars)
+    pars<-train(trainset, weights, trainclass)
+    allPars <- rbind(allPars, pars)
 
 
     #compute classes
-    classes <- classify(data, pars)
+    classes <- classify(trainset, pars)
 
 
     #comput err
     sum_num<-0
     sum_den<-0
     for(i in 1:count){
-        sum_num<-sum_num+weights[1,i]*(classes[1,i]!=class[1,i])
+        sum_num<-sum_num+weights[1,i]*(classes[1,i]!=trainclass[1,i])
         sum_den<-sum_den+weights[1,i]
     }   
     err<-sum_num/sum_den
@@ -60,17 +74,18 @@ while(b != B){
 
     #compute alpha
     alpha<-log((1-err)/err)
-    voting_weights <- cbind(voting_weights,alpha)
+
+    voting_weights <- rbind(voting_weights,alpha)
 
 
     #update weights
     for(i in 1:count){
-        weights[1,i] <- weights[1,i]*exp(alpha * (classes[1,i] != class[1,i]))
+        weights[1,i] <- weights[1,i]*exp(alpha * (classes[1,i] != trainclass[1,i]))
     }
 
     #loop
     b<-b+1
 }
     
-return(allPars=allPars, voting_weights=voting_weights)
+return(list(allPars=allPars, voting_weights=voting_weights))
 }

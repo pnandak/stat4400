@@ -10,49 +10,87 @@ train <- function(X, w, y){
 
 splitters <- list()
 split_costs<- list()
+split_m <- list()
 
 #----------------------
 #determine optimum thetas
 #----------------------
 print("Determining optimum thetas")
-
-costs<-list()
 for(i in 1:nrow(X)){
     print(paste("Calculating theta:", toString(ncol(splitters) )))
 
     #set default to first value
     split<-X[i,1]
+    m<-y[1,1]
     
     #calculate cost
     cost<-0
     for(l in 1:ncol(X)){
-        cost<-cost+1*(1*(X[i,l]>split)!=y[1,l])
+        class<-(m*(X[i,l]>=split))
+        if(class==0){
+            class<- -1*m
+        }
+        cost<-cost+w[1,i]*(class!=y[1,l])
     }
+    
     min_theta<-cost/ncol(X)
+    min_m<-m
+
+    #if this is the correct split point
+    if(min_theta==0){
+        print("here1")
+        #add to list of costs and splitters
+        splitters<- cbind(splitters,split)
+        split_costs <- cbind(split_costs,min_theta)
+        split_m<-cbind(split_m,min_m)
+        next
+    }
 
     #for every other value
     for(j in 2:ncol(X)){
         cost<-0
+        m<-y[1,j]
+        split_new<-X[i,j]
+
         #if proportion of misclassified is less
         for(k in 1:ncol(X)){
-            cost<-cost+1*(1*(X[i,k]>split)!=y[1,k])
-
+            class<-(m*(X[i,k]>=split_new))
+            if(class==0){
+                class<- -1*m
+            }
+            cost<-cost+w[1,i]*(class!=y[1,k])
         }
         min_theta_new<-cost/ncol(X)
+
         if(min_theta_new<=min_theta){
-            split<-X[i,k]
+            split<-split_new
             min_theta<-min_theta_new
+            min_m<-m
+        }
+        if(cost==0){
+            print("here2")
+            break
         }
     }
 
     #add to list of costs and splitters
     splitters<- cbind(splitters,split)
     split_costs <- cbind(split_costs,min_theta)
+    split_m<-cbind(split_m,min_m)
+#    print(split)
+ #   print(min_theta)
+    if(min_theta>.5){
+        print("error.")
+    }
 }
 
 #splitters is list of values to split on
 #costs is list of costs
 #----------------------
+
+
+
+
 
 
 
@@ -65,9 +103,12 @@ min_j <- 1
 sum_num<-0
 sum_den<-0
 #calculate cost 
-print("Calculating weighted costs")
 for(i in 1:ncol(X)){
-    sum_num<-sum_num+ w[1,i]*(y[1,i]!=(X[1,i]>splitters[1,1]) )
+    class<- as.integer(split_m[1,1])*1*(X[1,i]>=splitters[1,1])
+    if(class==0){
+        class<- -1*split_m[1,1]
+    }
+    sum_num<-sum_num+ w[1,i]*(y[1,i]!=class)
     sum_den<-sum_den+w[1,i]
 }
 min_j_weight<-sum_num/sum_den
@@ -78,7 +119,11 @@ for(j in 2:nrow(X)){
     sum_den<-0
     #calculate cost 
     for(i in 1:ncol(X)){
-        sum_num<-sum_num+ w[1,i]*(y[1,i]!=(X[j,i]>splitters[1,j]) )
+        class<- as.integer(split_m[1,j])*1*(X[j,i]>=splitters[1,j])
+        if(class==0){
+            class<- -1*split_m[1,j]
+        }
+        sum_num <- sum_num + w[1,i] * (y[1,i]!= class)
         sum_den<-sum_den+w[1,i]
     }
     min_j_weight_new<-sum_num/sum_den
@@ -93,7 +138,7 @@ for(j in 2:nrow(X)){
 
 
 #return tuple of (j,theta,m)
-pars<-cbind(min_j,splitters[1,j],1)
+pars<-cbind(min_j,splitters[1,min_j],split_m[1,min_j])
 pars <- as.matrix(pars, nrow=1)
 print(pars)
 

@@ -14,9 +14,6 @@ index<-as.integer(pars[1,1])
 
 
 for(i in 1:ncol(X)){
-    print(X[index,i])
-    print(pars[1,2])
-    print(pars[1,3])
 
     class<-(as.double(X[index,i])>as.double(pars[1,2]))*as.double(pars[1,3])
     labels<-cbind(labels,class)
