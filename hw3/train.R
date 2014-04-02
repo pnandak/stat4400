@@ -14,8 +14,12 @@ split_costs<- list()
 #----------------------
 #determine optimum thetas
 #----------------------
+print("Determining optimum thetas")
+
+costs<-list()
 for(i in 1:nrow(X)){
-    
+    print(paste("Calculating theta:", toString(ncol(splitters) )))
+
     #set default to first value
     split<-X[i,1]
     
@@ -32,9 +36,10 @@ for(i in 1:nrow(X)){
         #if proportion of misclassified is less
         for(k in 1:ncol(X)){
             cost<-cost+1*(1*(X[i,k]>split)!=y[1,k])
+
         }
-        min__theta_new<-cost/ncol(X)
-        if(min__theta_new<=min_theta){
+        min_theta_new<-cost/ncol(X)
+        if(min_theta_new<=min_theta){
             split<-X[i,k]
             min_theta<-min_theta_new
         }
@@ -55,10 +60,12 @@ for(i in 1:nrow(X)){
 #-----------------
 #determine optimum j 
 #-----------------
+print("Determining minimum j")
 min_j <- 1
 sum_num<-0
 sum_den<-0
 #calculate cost 
+print("Calculating weighted costs")
 for(i in 1:ncol(X)){
     sum_num<-sum_num+ w[1,i]*(y[1,i]!=(X[1,i]>splitters[1,1]) )
     sum_den<-sum_den+w[1,i]
@@ -86,8 +93,9 @@ for(j in 2:nrow(X)){
 
 
 #return tuple of (j,theta,m)
-pars<-rbind(min_j,splitters[1,j],1)
-
+pars<-cbind(min_j,splitters[1,j],1)
+pars <- as.matrix(pars, nrow=1)
+print(pars)
 
 return(pars=pars)
 }

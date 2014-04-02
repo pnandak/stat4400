@@ -10,8 +10,10 @@ adaboost <- function(data, class){
 #read in data
 d <- read.table(data, header = FALSE, sep = "", skip = 0)
 c <- read.table(class, header = FALSE, skip = 0)
-data <- as.matrix(d)
-class <- as.matrix(c,nrow=1)
+data <- t(as.matrix(d))
+class <- matrix(unlist(c), nrow=1)
+
+
 
 #Data is BxM matrix, where there are M
 #Vectors each with B dimensions
@@ -28,7 +30,7 @@ B <- nrow(data)
 count <- ncol(data)
 
 #initilize weights, 1 per dim
-weights <- as.matrix(rep(1/B,B),nrow=1)
+weights <- t(as.matrix(rep(1/B,B),nrow=1))
 
 #initilize allPars which keeps B copies of (j, theta, m)
 allPars <- list()
