@@ -18,7 +18,7 @@ for(i in 1:ncol(X)){
     print(pars[1,2])
     print(pars[1,3])
 
-    class<-(X[index,i]>pars[1,2])*pars[1,3]
+    class<-(as.double(X[index,i])>as.double(pars[1,2]))*as.double(pars[1,3])
     labels<-cbind(labels,class)
 }
 
