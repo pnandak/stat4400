@@ -106,7 +106,7 @@ sum_den<-0
 for(i in 1:ncol(X)){
     class<- as.integer(split_m[1,1])*1*(X[1,i]>=splitters[1,1])
     if(class==0){
-        class<- -1*split_m[1,1]
+        class<- -1*as.integer(split_m[1,1])
     }
     sum_num<-sum_num+ w[1,i]*(y[1,i]!=class)
     sum_den<-sum_den+w[1,i]
@@ -121,7 +121,7 @@ for(j in 2:nrow(X)){
     for(i in 1:ncol(X)){
         class<- as.integer(split_m[1,j])*1*(X[j,i]>=splitters[1,j])
         if(class==0){
-            class<- -1*split_m[1,j]
+            class<- -1*as.integer(split_m[1,j])
         }
         sum_num <- sum_num + w[1,i] * (y[1,i]!= class)
         sum_den<-sum_den+w[1,i]
