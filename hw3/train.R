@@ -24,16 +24,18 @@ for(i in 1:nrow(X)){
     m<-y[1,1]
     
     #calculate cost
-    cost<-0
+    sum_num<-0
+    sum_den<-0
     for(l in 1:ncol(X)){
         class<-(m*(X[i,l]>=split))
         if(class==0){
             class<- -1*m
         }
-        cost<-cost+w[1,i]*(class!=y[1,l])
+        sum_num<-sum_num+w[1,i]*(class!=y[1,l])
+        sum_den<-sum_den+w[1,i]
     }
     
-    min_theta<-cost/ncol(X)
+    min_theta<-sum_num/sum_den
     min_m<-m
 
     #if this is the correct split point
@@ -48,7 +50,8 @@ for(i in 1:nrow(X)){
 
     #for every other value
     for(j in 2:ncol(X)){
-        cost<-0
+        sum_num<-0
+        sum_den<-0
         m<-y[1,j]
         split_new<-X[i,j]
 
@@ -58,16 +61,17 @@ for(i in 1:nrow(X)){
             if(class==0){
                 class<- -1*m
             }
-            cost<-cost+w[1,i]*(class!=y[1,k])
+            sum_num<-sum_num+w[1,i]*(class!=y[1,k])
+            sum_den<-sum_den+w[1,i]
         }
-        min_theta_new<-cost/ncol(X)
+        min_theta_new<-sum_num/sum_den
 
         if(min_theta_new<=min_theta){
             split<-split_new
             min_theta<-min_theta_new
             min_m<-m
         }
-        if(cost==0){
+        if(min_theta_new==0){
             print("here2")
             break
         }
