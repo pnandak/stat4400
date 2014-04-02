@@ -50,8 +50,8 @@ while(b != B){
     sum_num<-0
     sum_den<-0
     for(i in 1:count){
-        sum_num<-sum_num+weights[,i]*(classes[,i]!=class[,i])
-        sum_den<-sum_den+weights[,i]
+        sum_num<-sum_num+weights[1,i]*(classes[1,i]!=class[1,i])
+        sum_den<-sum_den+weights[1,i]
     }   
     err<-sum_num/sum_den
 
@@ -63,7 +63,7 @@ while(b != B){
 
     #update weights
     for(i in 1:count){
-        weights[i] <- weights[i]*exp(alpha * (classes[i] != class[i]))
+        weights[1,i] <- weights[1,i]*exp(alpha * (classes[1,i] != class[1,i]))
     }
 
     #loop

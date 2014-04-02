@@ -9,10 +9,10 @@
 classify <- function(X,pars){
 
 labels<-list()
-index<-pars[1] 
+index<-pars[1,1] 
 
 for(i in 1:ncol(X)){
-    class<-(X[index,i]>pars[2])*pars[3]
+    class<-(X[index,i]>pars[1,2])*pars[1,3]
     labels<-cbind(labels,class)
 }
 
