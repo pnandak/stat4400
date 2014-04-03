@@ -12,12 +12,15 @@ splitters <- list()
 split_costs<- list()
 split_m <- list()
 
+
+
 #----------------------
 #determine optimum thetas
 #----------------------
-print("Determining optimum thetas")
+print("Determining optimum thetas (this may take a moment)")
 for(i in 1:nrow(X)){
-    print(paste("Calculating theta:", toString(ncol(splitters) )))
+    #if((i%%20)==0)
+     #   print(paste("Calculating theta:", toString(ncol(splitters) )))
 
     #set default to first value
     split<-X[i,1]
@@ -27,12 +30,12 @@ for(i in 1:nrow(X)){
     sum_num<-0
     sum_den<-0
     for(l in 1:ncol(X)){
-        class<-(m*(X[i,l]>=split))
+        class<-(m*(X[i,l]>split))
         if(class==0){
             class<- -1*m
         }
-        sum_num<-sum_num+w[1,i]*(class!=y[1,l])
-        sum_den<-sum_den+w[1,i]
+        sum_num<-sum_num+w[1,l]*(class!=y[1,l])
+        sum_den<-sum_den+w[1,l]
     }
     
     min_theta<-sum_num/sum_den
@@ -40,7 +43,6 @@ for(i in 1:nrow(X)){
 
     #if this is the correct split point
     if(min_theta==0){
-        print("here1")
         #add to list of costs and splitters
         splitters<- cbind(splitters,split)
         split_costs <- cbind(split_costs,min_theta)
@@ -57,12 +59,12 @@ for(i in 1:nrow(X)){
 
         #if proportion of misclassified is less
         for(k in 1:ncol(X)){
-            class<-(m*(X[i,k]>=split_new))
+            class<-(m*(X[i,k]>split_new))
             if(class==0){
                 class<- -1*m
             }
-            sum_num<-sum_num+w[1,i]*(class!=y[1,k])
-            sum_den<-sum_den+w[1,i]
+            sum_num<-sum_num+w[1,k]*(class!=y[1,k])
+            sum_den<-sum_den+w[1,k]
         }
         min_theta_new<-sum_num/sum_den
 
@@ -72,17 +74,17 @@ for(i in 1:nrow(X)){
             min_m<-m
         }
         if(min_theta_new==0){
-            print("here2")
             break
         }
     }
+
 
     #add to list of costs and splitters
     splitters<- cbind(splitters,split)
     split_costs <- cbind(split_costs,min_theta)
     split_m<-cbind(split_m,min_m)
-#    print(split)
- #   print(min_theta)
+
+
     if(min_theta>.5){
         print("error.")
     }
@@ -108,7 +110,7 @@ sum_num<-0
 sum_den<-0
 #calculate cost 
 for(i in 1:ncol(X)){
-    class<- as.integer(split_m[1,1])*1*(X[1,i]>=splitters[1,1])
+    class<- as.integer(split_m[1,1])*1*(X[1,i]>splitters[1,1])
     if(class==0){
         class<- -1*as.integer(split_m[1,1])
     }
@@ -123,7 +125,7 @@ for(j in 2:nrow(X)){
     sum_den<-0
     #calculate cost 
     for(i in 1:ncol(X)){
-        class<- as.integer(split_m[1,j])*1*(X[j,i]>=splitters[1,j])
+        class<- as.integer(split_m[1,j])*1*(X[j,i]>splitters[1,j])
         if(class==0){
             class<- -1*as.integer(split_m[1,j])
         }
@@ -136,8 +138,8 @@ for(j in 2:nrow(X)){
         min_j_weight<-min_j_weight_new
     }
 }
-
 #-----------------
+
 
 
 
@@ -148,3 +150,4 @@ print(pars)
 
 return(pars=pars)
 }
+
