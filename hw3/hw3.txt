@@ -1,0 +1,25 @@
+Problem 3.
+
+Description:
+
+TRAIN: train works as described in the homework. Essentially, for each dimension, I pick a value for theta that minimizes (2) given in the homework. Then, I iterate through the j’s, looking for the dimension in which (2) is minimal. 
+
+CLASSIFY: I evaluate (1) in order to determine which class each point belongs in.
+
+AGG_CLASS: I use each weak learner in allPars, weighted by the alphas, in order to vote which class each point in X belongs in.
+
+ADABOOST: 
+Initialization: I split the data into testing and training data, and initialize the necessary variables, including weights, iterations, etc. 
+
+Loop: I separate the training data into 5 sets to cross validate the weak learner generated. I then train each of the 5 weak learners, and calculate how accurate they were. I choose the most accurate of the 5, add the weak learner to the list of other weak learners, compute the error, compute the voting weights (alpha), and recompute the weights w. I then calculate both the validation error and the test error for each iteration, and add those to a list of errors which will be output later. I then increment the iteration and run the loop again. 
+
+At each iteration, I am cross validating the generated weak learner in order to pick the optimum weak learner. 
+
+
+
+
+OUTCOME:
+My results look correct, although since the working set is only around 132 points, the fluctuations are greater than they would be if we had a larger set to learn around (as in the notes). However, the behavior that is exhibited is what I expected. 
+
+NOTES:
+Because I am doing all of my optimizations manually, my algorithm is somewhat slow. Selecting the thetas for each dimension is and O(n^2) operation, and must be done for each of the 256 iterations. I was able to generate about 50 data points by running the algorithm overnight. 
