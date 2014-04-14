@@ -4,7 +4,7 @@
 #Outputs
 #none
 
-visualize <- function(m){
+visualize <- function(m, x, y){
+    image(m)
 
-return()
 }
