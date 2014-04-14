@@ -12,25 +12,29 @@ MultinomialEM <- function(H, K, tau){
     dim <- ncol(H)
 
     #centroids
-    t_k <- matrix(, ncol=K, nrow=dim)
+    index <- 1:n
+    centroids<- sample(index,K)
+    t_k <- matrix(t(H[centroids,] ), ncol=K)
 
     #assignment probabilities
-    a_n <- matrix(, ncol=1, nrow=n)
+    a_n <- matrix(0, ncol=1, nrow=n)
 
     #mixture weights
-    c_k <- matrix(, ncol=K, nrow=1)
+    c_k <- matrix(0, ncol=K, nrow=1)
 
     #b
-    b <- matrix(, ncol=K, nrow=1)
+    b <- matrix(0, ncol=K, nrow=1)
 
     #phi
-    phi <- matrix(, ncol=K, nrow=n)
+    phi <- matrix(0, ncol=K, nrow=n)
 
     #delta
     delta <- 0
 
     #hard assignments
-    m_n <- matrix(, ncol=1, nrow=n)
+    m_n <- matrix(0, ncol=1, nrow=n)
+
+
 
 
     return(m=m_n)
