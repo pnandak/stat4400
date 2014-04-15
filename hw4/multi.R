@@ -34,18 +34,19 @@ MultinomialEM <- function(H, K, tau){
     delta <- tau + 1.0
 
     #hard assignments
-    m_n <- matrix(0, ncol=1, nrow=n)
+    m_n <- matrix(1.0/K, ncol=1, nrow=n)
 
 
 
     while(delta >= tau) {
+
+
         #compute phi
+        #t_k<-matrix(apply(t_k, 1:2, function(x){if(x==0){x<-x+0.001}else{x}}), ncol= ncol(t_k), nrow=nrow(t_k))
         t_k <- matrix(apply(t_k, 1:2, function(x) log(x)), ncol=ncol(t_k), nrow=nrow(t_k))
 
         #want n*k matrix
-        tmp <- H_i %*% t_k
-
-
+        tmp <- H_i%*%t_k
         phi <- matrix(apply(tmp, 1:2, function(x) exp(x)), nrow=nrow(tmp), ncol=ncol(tmp))
 
 
@@ -53,8 +54,6 @@ MultinomialEM <- function(H, K, tau){
         a_n_old <- a_n
         #n*1 denominator 
         denom <- phi%*%c_k
-
-
         #numer <- matrix(apply(phi, 1, function(x) x*c_k), nrow = nrow(phi), ncol=ncol(phi))
         numer <- matrix(1, nrow = n, ncol=K)
         for(i in 1:n){
@@ -62,8 +61,6 @@ MultinomialEM <- function(H, K, tau){
                 numer[i,j] <- c_k[j,1]*phi[i,j]
             }
         }
-
-
         #divide each element by the denominator
         for(i in 1:n){
             for(j in 1:K){
@@ -72,33 +69,34 @@ MultinomialEM <- function(H, K, tau){
         }
 
 
+        #FINE 
         #compute c
         tmp <- matrix(1, nrow=1, ncol=n)
         #sum over n
-        numer <- tmp %*% a_n
+        numer <- tmp%*%a_n
         #scale by n
         for(i in 1:K){
-            c_k[i,1] <- numer[1,i] / n
+            c_k[i,1] <- numer[1,i]/n
         }
 
 
+        #FINE
         #compute b
         #b is dim by K 
-        b_k <- t(H_i) %*%a_n
+        b_k <- t(H_i)%*%a_n
 
 
-
+        #FINE
         #compute t
         tmp <- matrix(1, nrow=K, ncol=1)
         for(i in 1:dim){
             for(j in 1:K){
-                t_k[i,j] <- b_k[i,j] / (b_k[i,] %*% tmp)
+                t_k[i,j] <- b_k[i,j] / as.double((b_k[i,]%*%tmp))
             }
         }
         #t_k <- matrix(apply(b_k, 1, function(x) x/sum(x, na.rm=FALSE)), nrow=nrow(t_k), ncol=ncol(t_k))
 
-
-
+        #FINE
         #update delta
         nor <- a_n - a_n_old
         delta <- norm(nor, 'O')
@@ -106,7 +104,7 @@ MultinomialEM <- function(H, K, tau){
 
     #make hard assignments
     for( i in 1:n){
-        m_n[i,] <- which.max(a_n[i,])
+        m_n[i,1] <- which.max(a_n[i,])
     }
 
     return(m=m_n)
