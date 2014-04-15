@@ -13,8 +13,6 @@ MultinomialEM <- function(H, K, tau){
     dim <- ncol(H_i)
     H_i<-matrix(apply(H_i, 1:2, function(x){if(x<1){x<-x+0.01}else{x}}), ncol= ncol(H_i), nrow=nrow(H_i))
 
-    print(H_i[1,])
-
     #centroids
     index <- 1:n
     centroids<- sample(index,K)
@@ -30,31 +28,26 @@ MultinomialEM <- function(H, K, tau){
     #b_k <- matrix(0, ncol=K, nrow=1)
 
     #phi
-    phi <- matrix(0.0, ncol=K, nrow=n)
+    phi <- matrix(1.0/K, ncol=K, nrow=n)
 
     #delta
-    delta <- tau + 100.0
+    delta <- tau + 1.0
 
     #hard assignments
-    m_n <- matrix(1, ncol=1, nrow=n)
+    m_n <- matrix(0, ncol=1, nrow=n)
 
 
 
     while(delta >= tau) {
         #compute phi
         t_k <- matrix(apply(t_k, 1:2, function(x) log(x)), ncol=ncol(t_k), nrow=nrow(t_k))
-        print("error before here")
-        print(t_k)
-        print(H_i[1,])
 
         #want n*k matrix
-        phi <- H_i %*% t_k
-        print("error before here")
-        print(phi[1,])
+        tmp <- H_i %*% t_k
 
-        phi <- matrix(apply(phi, 1:2, function(x) exp(x)), nrow=nrow(phi), ncol=ncol(phi))
-        print("error before here")
-        print(phi[1,])
+
+        phi <- matrix(apply(tmp, 1:2, function(x) exp(x)), nrow=nrow(tmp), ncol=ncol(tmp))
+
 
         #compute a
         a_n_old <- a_n
@@ -62,14 +55,21 @@ MultinomialEM <- function(H, K, tau){
         denom <- phi%*%c_k
 
 
-        phi <- matrix(apply(phi, 1, function(x) x*c_k), nrow = nrow(phi), ncol=ncol(phi))
+        #numer <- matrix(apply(phi, 1, function(x) x*c_k), nrow = nrow(phi), ncol=ncol(phi))
+        numer <- matrix(1, nrow = n, ncol=K)
+        for(i in 1:n){
+            for(j in 1:K){
+                numer[i,j] <- c_k[j,1]*phi[i,j]
+            }
+        }
 
 
         #divide each element by the denominator
         for(i in 1:n){
-            a_n[i,] <- phi[i,] * denom[i,]
+            for(j in 1:K){
+                a_n[i,j] <- numer[i,j] / denom[i,1]
+            }
         }
-
 
 
         #compute c
@@ -77,11 +77,9 @@ MultinomialEM <- function(H, K, tau){
         #sum over n
         numer <- tmp %*% a_n
         #scale by n
-        c_k <- numer / n
-        #numer is 1*k, we need k*1
-        c_k <- t(c_k)
-
-
+        for(i in 1:K){
+            c_k[i,1] <- numer[1,i] / n
+        }
 
 
         #compute b
@@ -91,24 +89,24 @@ MultinomialEM <- function(H, K, tau){
 
 
         #compute t
-        t_k <- matrix(apply(b_k, 1, function(x) x/sum(x, na.rm=FALSE)), nrow=nrow(t_k), ncol=ncol(t_k))
-
+        tmp <- matrix(1, nrow=K, ncol=1)
+        for(i in 1:dim){
+            for(j in 1:K){
+                t_k[i,j] <- b_k[i,j] / (b_k[i,] %*% tmp)
+            }
+        }
+        #t_k <- matrix(apply(b_k, 1, function(x) x/sum(x, na.rm=FALSE)), nrow=nrow(t_k), ncol=ncol(t_k))
 
 
 
         #update delta
         nor <- a_n - a_n_old
         delta <- norm(nor, 'O')
-        print("tau")
-        print(tau)
-        print("delta")
-        print(delta)
-
     }
 
     #make hard assignments
     for( i in 1:n){
-        m_n[i] <- which.max(a_n[i,])
+        m_n[i,] <- which.max(a_n[i,])
     }
 
     return(m=m_n)
